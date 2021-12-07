@@ -334,20 +334,6 @@ public:
         return thisPose6D;
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
     bool saveMapService(lio_sam::save_mapRequest& req, lio_sam::save_mapResponse& res)
     {
       string saveMapDirectory;
@@ -357,9 +343,11 @@ public:
       if(req.destination.empty()) saveMapDirectory = std::getenv("HOME") + savePCDDirectory;
       else saveMapDirectory = std::getenv("HOME") + req.destination;
       cout << "Save destination: " << saveMapDirectory << endl;
+
       // create directory and remove old files;
       int unused = system((std::string("exec rm -r ") + saveMapDirectory).c_str());
       unused = system((std::string("mkdir -p ") + saveMapDirectory).c_str());
+
       // save key frame transformations
       pcl::io::savePCDFileBinary(saveMapDirectory + "/trajectory.pcd", *cloudKeyPoses3D);
       pcl::io::savePCDFileBinary(saveMapDirectory + "/transformations.pcd", *cloudKeyPoses6D);
@@ -937,13 +925,6 @@ public:
     {
         if (cloudKeyPoses3D->points.empty() == true)
             return; 
-        
-        // if (loopClosureEnableFlag == true)
-        // {
-        //     extractForLoopClosure();    
-        // } else {
-        //     extractNearby();
-        // }
 
         extractNearby();
     }
@@ -1735,7 +1716,7 @@ int main(int argc, char** argv)
     mapOptimization MO;
 
     ROS_INFO("\033[1;32m----> Map Optimization Started.\033[0m");
-    
+
     std::thread loopthread(&mapOptimization::loopClosureThread, &MO);
     std::thread visualizeMapThread(&mapOptimization::visualizeGlobalMapThread, &MO);
 
